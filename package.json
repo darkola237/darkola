@@ -1,0 +1,17 @@
+{
+  "name": "sia-orbitdb",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.mjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.7.2",
+    "ipfs": "^0.66.1",
+    "orbit-db": "^0.29.0"
+  }
+}
