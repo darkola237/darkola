@@ -1,6 +1,8 @@
 import { create as createIPFS } from 'ipfs-core';
 import OrbitDB from 'orbit-db';
 import axios from 'axios';
+import FormData from 'form-data';
+import { Buffer } from 'buffer';
 
 class SiaS5Storage {
   constructor(options) {
@@ -65,16 +67,26 @@ const backupOrbitDB = async (db, s5NodeUrl) => {
   try {
     // Create a snapshot of the database
     const snapshot = await db.saveSnapshot();
-    
+
+    console.log('Snapshot created', snapshot);
+
     // Convert the snapshot to a buffer
     const snapshotBuffer = Buffer.from(JSON.stringify(snapshot));
-    
-    const s5ClientAuthToken = 'S5A5ndByxZSiLXjmWBJYHKcbCe7a1aWCzgbx1ZPebKKN6bL';
+
+    const s5ClientAuthToken = 'S5AD7KLaXFLygyUGVbyc9q1gbeprXauGbWhUsokGeYVRiUx';
+
+    // Create a FormData instance to handle multipart upload
+    const form = new FormData();
+    form.append('file', snapshotBuffer, {
+      filename: 'snapshot.json',
+      contentType: 'application/json'
+    });
+
     // Upload the snapshot to S5
-    const response = await axios.post(`${s5NodeUrl}`, snapshotBuffer, {
+    const response = await axios.post(`${s5NodeUrl}/s5/upload`, form, {
       headers: {
-        Authorization: `Bearer ${s5ClientAuthToken}`,
-        'Content-Type': 'application/octet-stream'
+        ...form.getHeaders(),
+        Authorization: `Bearer ${s5ClientAuthToken}`
       }
     });
 
@@ -83,5 +95,6 @@ const backupOrbitDB = async (db, s5NodeUrl) => {
     console.error('Error backing up to S5:', error);
   }
 };
+
 
 initOrbitDB().catch(console.error);
