@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Operations Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="file"], input[type="text"], button {
+            margin: 10px 0;
+            padding: 5px;
+        }
+        #message {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>File Operations Test</h1>
+    
+    <h2>Upload File</h2>
+    <form id="uploadForm">
+        <input type="file" id="fileInput" required>
+        <button type="submit">Upload</button>
+    </form>
+
+    <h2>Download File</h2>
+    <form id="downloadForm">
+        <input type="text" id="fileNameInput" placeholder="Enter file name" required>
+        <button type="submit">Download</button>
+    </form>
+
+    <div id="message"></div>
+
+    <script>
+        const uploadForm = document.getElementById('uploadForm');
+        const downloadForm = document.getElementById('downloadForm');
+        const messageDiv = document.getElementById('message');
+
+        uploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('file', document.getElementById('fileInput').files[0]);
+
+            try {
+                const response = await fetch('/files/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                messageDiv.textContent = `File uploaded successfully. CID: ${result.cid}`;
+            } catch (error) {
+                messageDiv.textContent = 'Error uploading file: ' + error.message;
+            }
+        });
+
+        downloadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileName = document.getElementById('fileNameInput').value;
+
+            try {
+                const response = await fetch(`/files/download/${fileName}`);
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    messageDiv.textContent = 'File downloaded successfully.';
+                } else {
+                    messageDiv.textContent = 'Error downloading file: ' + response.statusText;
+                }
+            } catch (error) {
+                messageDiv.textContent = 'Error downloading file: ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html>
