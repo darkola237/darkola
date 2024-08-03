@@ -3,45 +3,45 @@ import axios from 'axios';
 import FormData from 'form-data';
 import { Buffer } from 'buffer';
 import config from './config.js';
-import { Readable } from 'stream'; 
+import { Readable } from 'stream';
 
 const SiaStorage = async () => {
-    const put = async (hash, data) => {
-        console.log("SiaStorage.put called with data:", data); // Debug log
-        try {
-          const form = new FormData();
-          
-          // Create a Readable stream from the buffer
-          const stream = new Readable();
-          stream.push(data);
-          stream.push(null);  // Signals the end of the stream
-          
-          form.append('file', stream, {
-            filename: hash,
-            contentType: 'application/octet-stream',
-            knownLength: data.length  // Specify the length of the data
-          });
-    
-          const response = await axios.post(`${config.S5_NODE_URL}/s5/upload`, form, {
-            headers: {
-              ...form.getHeaders(),
-              Authorization: `Bearer ${config.S5_CLIENT_AUTH_TOKEN}`
-            },
-            maxBodyLength: Infinity,  // To allow large file uploads
-            maxContentLength: Infinity
-          });
-    
-          console.log(`File uploaded to Sia with CID: ${response.data.cid}`);
-          return response.data.cid;
-        } catch (error) {
-          console.error('Error uploading to Sia:', error);
-          throw error;
-        }
-      };
+  const put = async (hash, data) => {
+    console.log("SiaStorage.put called with data:", data); // Debug log
+    try {
+      const form = new FormData();
+
+      // Create a Readable stream from the buffer
+      const stream = new Readable();
+      stream.push(data);
+      stream.push(null);  // Signals the end of the stream
+
+      form.append('file', stream, {
+        filename: hash,
+        contentType: 'application/octet-stream',
+        knownLength: data.length  // Specify the length of the data
+      });
+
+      const response = await axios.post(`${config.S5_NODE_URL}/s5/upload`, form, {
+        headers: {
+          ...form.getHeaders(),
+          Authorization: `Bearer ${config.S5_CLIENT_AUTH_TOKEN}`
+        },
+        maxBodyLength: Infinity,  // To allow large file uploads
+        maxContentLength: Infinity
+      });
+
+      console.log(`File uploaded to Sia with CID: ${response.data.cid}`);
+      return response.data.cid;
+    } catch (error) {
+      console.error('Error uploading to Sia:', error);
+      throw error;
+    }
+  };
 
   const get = async (hash) => {
     try {
-        const authToken = Buffer.from(`${config.S5_CLIENT_PWD}`).toString('base64');
+      const authToken = Buffer.from(`${config.S5_CLIENT_PWD}`).toString('base64');
       const response = await axios.get(`${config.S5_NODE_URL}/s5/blob/${hash}`, {
         responseType: 'arraybuffer',
         headers: {
