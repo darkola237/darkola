@@ -37,7 +37,7 @@ const SiaStorage = async () => {
       console.error('Error uploading to Sia:', error);
       throw error;
     }
-  };
+  };  
 
   const get = async (hash) => {
     try {
