@@ -1,4 +1,8 @@
 // config.js
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 export default {
   PORT: process.env.PORT || 3000,
   S5_NODE_URL: process.env.S5_NODE_URL,
