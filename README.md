@@ -5,7 +5,7 @@ A package for file storage using OrbitDB and Sia.
 ## Installation
 
 ```bash
-npm install sia-orbit-storage
+npm install darkolat
 ```
 
 ## Usage
@@ -23,7 +23,7 @@ S5_CLIENT_AUTH_TOKEN=your_s5_client_auth_token
 
 ```javascript
 import express from 'express';
-import { initOrbitDB, fileRoutes } from 'sia-orbit-storage';
+import { initOrbitDB, fileRoutes } from 'darkolat';
 
 const app = express();
 
