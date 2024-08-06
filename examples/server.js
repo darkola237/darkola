@@ -1,12 +1,7 @@
-// app.js
-import dotenv from 'dotenv';
-dotenv.config();
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { initOrbitDB } from './services/fileService.js';
-import fileRoutes from './routes/fileRoutes.js';
-import config from './config.js';
+import { initOrbitDB, fileRoutes, config } from 'darkolat';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,7 +19,7 @@ app.use('/files', fileRoutes);
 
 // Route to serve the test HTML file
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'test.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Start the server
