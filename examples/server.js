@@ -6,6 +6,7 @@ import { initOrbitDB, fileRoutes, config } from 'darkolat';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Initiate app
 const app = express();
 
 // Initialize OrbitDB
