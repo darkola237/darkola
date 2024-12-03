@@ -4,6 +4,7 @@ import FormData from 'form-data';
 import { Buffer } from 'buffer';
 import config from './config.js';
 import { Readable } from 'stream';
+import https from 'https';
 
 const SiaStorage = async () => {
   const put = async (hash, data) => {
@@ -37,23 +38,31 @@ const SiaStorage = async () => {
       console.error('Error uploading to Sia:', error);
       throw error;
     }
-  };  
+  };
 
   const get = async (hash) => {
+
+    const agent = new https.Agent({
+      rejectUnauthorized: false,
+      family: 4,
+    });
     try {
       const authToken = Buffer.from(`${config.S5_CLIENT_PWD}`).toString('base64');
-      const response = await axios.get(`${config.S5_NODE_URL}/s5/blob/${hash}`, {
+      const response = await axios.get(`${config.S5_DOWNLOAD_URL}/s5/blob/${hash}`, {
         responseType: 'arraybuffer',
         headers: {
           Authorization: `Basic ${authToken}`
-        }
+        },
+        httpsAgent: agent
       });
-      return Buffer.from(response.data);
+      console.log("data getted ", Buffer.from(response.data))
+      // return Buffer.from(response.data);
     } catch (error) {
       console.error('Error downloading from Sia:', error);
       throw error;
     }
   };
+
 
   const del = async (hash) => {
     console.warn('Delete operation not supported in Sia storage');
